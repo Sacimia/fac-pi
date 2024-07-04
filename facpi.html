@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Razão de Fatorial e Primorial</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 50%;
+        margin: 20px auto;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+    <h2>Razão de Fatorial e Primorial</h2>
+    <label for="numero">Insira um número:</label>
+    <input type="number" id="numero" min="1" value="1">
+    <button onclick="gerarTabela()">Gerar Tabela</button>
+
+    <table id="result-table">
+        <tr>
+            <th>N</th>
+            <th>Fatorial de N</th>
+            <th>Primorial de N</th>
+            <th>Razão (Fatorial / Primorial)</th>
+            <th>Decomposição em Potências de Primos</th>
+        </tr>
+    </table>
+
+    <script>
+        // Função para calcular o fatorial de um número
+        function calcularFatorial(n) {
+            if (n === 0 || n === 1) {
+                return 1;
+            }
+            let resultado = 1;
+            for (let i = 2; i <= n; i++) {
+                resultado *= i;
+            }
+            return resultado;
+        }
+
+        // Função para calcular o primorial de um número
+        function calcularPrimorial(n) {
+            let resultado = 1;
+            for (let i = 2; i <= n; i++) {
+                if (isPrimo(i)) {
+                    resultado *= i;
+                }
+            }
+            return resultado;
+        }
+
+        // Função auxiliar para verificar se um número é primo
+        function isPrimo(num) {
+            for (let i = 2, sqrt = Math.sqrt(num); i <= sqrt; i++) {
+                if (num % i === 0) {
+                    return false;
+                }
+            }
+            return num > 1;
+        }
+
+        // Função para decompor um número em potências de primos
+        function decomporEmPotenciasDePrimos(numero) {
+            const decomposicao = [];
+            let num = numero;
+            for (let i = 2; i <= num; i++) {
+                if (isPrimo(i)) {
+                    let count = 0;
+                    while (num % i === 0) {
+                        num /= i;
+                        count++;
+                    }
+                    if (count > 0) {
+                        decomposicao.push({ base: i, expoente: count });
+                    }
+                }
+            }
+            return decomposicao;
+        }
+
+        // Gerar a tabela com os resultados até o número inserido pelo usuário
+        function gerarTabela() {
+            const numero = parseInt(document.getElementById('numero').value);
+            const table = document.getElementById('result-table');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+
+            for (let n = 1; n <= numero; n++) {
+                const fatorial = calcularFatorial(n);
+                const primorial = calcularPrimorial(n);
+                const razao = fatorial / primorial;
+                const decomposicao = decomporEmPotenciasDePrimos(razao);
+
+                const row = `<tr>
+                                <td>${n}</td>
+                                <td>${fatorial}</td>
+                                <td>${primorial}</td>
+                                <td>${razao.toFixed(4)}</td>
+                                <td>${formatarDecomposicao(decomposicao)}</td>
+                             </tr>`;
+                tbody.innerHTML += row;
+            }
+        }
+
+        // Função auxiliar para formatar a decomposição em potências de primos
+        function formatarDecomposicao(decomposicao) {
+            if (decomposicao.length === 0) {
+                return '-';
+            }
+            return decomposicao.map(item => `${item.base}<sup>${item.expoente}</sup>`).join(' * ');
+        }
+    </script>
+</body>
+</html>
